@@ -3,18 +3,295 @@
     <style>
         #main{margin :100px 200px auto};
         </style>
+
 </head>
+<body>
 <div id="main">
+    <form>
     <div >
-<input type="text" placeholder="search here">
-        <input type="button" value="Search">
+
+
+
+<input type="text" id="search" placeholder="search here" >
+        <input type ="button" value="search" onclick=btn()>
     </div>
     <div>
-<input type="checkbox" id="Google Scholar">Google Scholar
+<input type="checkbox" id="Google Scholar" onclick=go_sc()>Google Scholar
     </div>
-    <div><input type="checkbox" id="NCBI">NCBI
+    <div id="link">
+        <div><input type="checkbox" id="NCBI">NCBI
+        <div id="All" style="display:none">
+            <input type="checkbox" onclick=al()>ALL Databases
+        </div>
+        </div>
+
+
     </div>
+    </form>
 </div>
+<script>
+
+    document.getElementById("NCBI").addEventListener("click", CE);
+    var all= document.getElementById("All");
+    var sear= document.getElementById("search");
+    let div,a,att;
+    var link=document.getElementById("link");
+    //var query=sear.value;
+    var node,node2;
+    var obj={},i=0;
+    var scho_query="https://scholar.google.co.in/scholar?hl=en&as_sdt=0%2C5&q=re&oq=";
+
+    var ncbi_query="https://www.ncbi.nlm.nih.gov/search/all/?term=re";
+
+    function go_sc(){
+        scho_query=scho_query.replace("re",sear.value);
+        obj["Google Scholar"]=scho_query;
+
+        /*node= document.createTextNode(scho_query);
+        div.appendChild(node);*/
+    }
+
+
+    function al() {
+       // ncbi_query1 = ncbi_query.replace("re", query);
+       ncbi_query= ncbi_query.replace("re", sear.value );
+        obj["ncbi"]=ncbi_query;
+
+        /*node2 = document.createTextNode(scho_query);
+        div.appendChild(node2);*/
+    }
+
+
+    function btn(){
+//console.log(obj);
+for (key in obj){
+    div=document.createElement("div");
+    a=document.createElement("a");
+    att=document.createAttribute('href');
+    att.value=obj[key];
+    a.setAttributeNode(att);
+    node= document.createTextNode(key);
+    a.appendChild(node);
+    div.appendChild(a);
+
+    link.appendChild(div);
+
+}
+    }
+
+
+    function CE(){
+        console.log("clicked");
+        if(all.style.display==="block"){
+            all.style.display="none";
+        }else{
+            all.style.display="block";
+        }
+    }
+    // function Node(val){
+    //     this.value=val;
+    //     this.pointer=null;
+    // }
+    //
+    // class Singl{
+    //     constructor(){
+    //         this.length=0;
+    //         this.head=null;
+    //         this.tail=null;
+    //     }
+    //
+    //     push(val){
+    //         let objects= new Node(val);
+    //         console.log(objects);
+    //         if(!this.head){
+    //             this.head= objects;
+    //             this.tail= objects;
+    //         }else{
+    //             this.tail.pointer=objects;
+    //             this.tail=objects;
+    //         }
+    //         this.length++;
+    //         return this;
+    //     }
+    //
+    //
+    // }
+    //
+    // var obj = new Singl() ;
+    // obj.push("abc");
+    // obj.push("def");
+    // obj.push("ghi");
+    // obj.push("jkl");
+
+    //console.log(obj);
+
+class Node{
+        constructor(val){
+            this.value=val;
+            this.next=null;
+            this.prev=null;
+        }
+}
+class DoublyLL{
+        constructor(){
+            this.length=0;
+            this.tail=null;
+            this.head=null;
+        }
+        push(val){
+
+            var head= new Node(val);
+            if(this.head===null){
+                this.head=head;
+                this.tail=this.head;
+            }else{
+
+
+                this.tail.next=head;
+                head.prev=this.tail;
+                this.tail=head;
+
+                }
+            this.length++;
+                return this;
+            }
+            pop(){
+            if(!this.head){
+                return undefined;
+            }else if(this.length===1){
+                this.head=null;
+                this.tail=null;
+            }else{
+                this.tail=this.tail.prev;
+                this.tail.next=null;
+                this.length--;
+            }
+            return this;
+            }
+            shift(){
+                if(!this.head){
+                    return undefined;
+                }else if(this.length===1){
+                    this.head=null;
+                    this.tail=null;
+                }else{
+                    this.head=this.head.next;
+                    this.head.prev=null;
+                    this.length--;
+                }
+                return this;
+            }
+            unshift(val){
+            var node=new Node(val);
+            var oldhead;
+                if(!this.head){
+                    this.head=node;
+                    this.tail=node;
+                }else{
+                    oldhead=this.head;
+                    this.head=node;
+                    this.head.next=oldhead;
+                    oldhead.prev=this.head;
+
+                }
+                this.length++;
+                return this;
+            }
+            get(index){
+            var node;
+            if((index<0||index>=this.length)){
+                return false;
+            }else if(this.length/2<index){
+                node=this.tail;
+                for(i=this.length-1;i>0;i--){
+
+                    if(i===index){
+                        return node;
+                    }
+                    node=node.prev;
+                }
+            }else{
+                node=this.head;
+                for(i=0;i<this.length; i++){
+
+                    if(i===index){
+                        return node;
+                    }
+                    node=node.next;
+                }
+
+            }
+
+            }
+            set(val,index){
+            var node=this.get(index);
+            node.value=val;
+            return this;
+
+            }
+            insert(val,index){
+            var node= new Node(val);
+            var ind=this.get(index);
+            var pre=this.get(index-1);
+            if(index<0 || index >this.length ){
+                return false;
+            }else if(index===0){
+                this.unshift(val);
+            }else if(index===this.length){
+                this.unshift(val);
+            }else{
+                pre.next=node
+            node.prev= pre;
+                ind.prev=node;
+            node.next= ind;
+
+
+
+            this.length++;
+            return this;
+            }
+
+            }
+            remove(index){
+            var pre=this.get(index-1);
+            var ind=this.get(index+1);
+                if(index<0 || index >this.length ){
+                    return false;
+                }else if(index===0){
+                    this.shift();
+                }else if(index===this.length){
+                    this.pop();
+                }else{
+                    pre.next=ind;
+                    ind.prev=pre;
+
+
+
+                    this.length--;
+                    return this;
+                }
+            }
+        }
+
+
+var app= new DoublyLL();
+    app.push("apple");
+    app.push("Mac book air");
+    app.push("last");
+    // app.pop();
+    // app.shift();
+    // app.unshift("mac");
+    //app.push("last");
+    app.push("last2");
+app.insert("Mac book pro",2);
+    //console.log(app.set("Mac book pro",1));
+    app.remove(3);
+    console.log(app.tail);
+
+
+
+</script>
+
 </body>
 
 </html>
